@@ -1,0 +1,25 @@
+name: Download Latest Purpur
+
+on:
+  workflow_dispatch:                      # Allow manual trigger
+    inputs:
+      mc_version:
+        description: 'Minecraft version (e.g., 1.21, 1.20.6, 1.19.4)'
+        required: true
+        default: '1.21'
+        type: string
+
+jobs:
+  download:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download Purpur JAR
+        run: |
+          curl -L -o purpur.jar "https://api.purpurmc.org/v2/purpur/${{ github.event.inputs.mc_version }}/latest/download"
+
+      - name: Upload JAR as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: purpur-${{ github.event.inputs.mc_version }}-latest
+          path: purpur.jar
+          if-no-files-found: error
